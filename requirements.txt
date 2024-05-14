@@ -1,6 +1,7 @@
 https://github.com/joshuasundance-swca/st-multimodal-chatinput/releases/download/v0.1.7-experimental-unapproved-text-color/st_multimodal_chatinput-0.1.7-py3-none-any.whl
 langchain
 langchain-openai
+langchain-google-genai
 langsmith
 openai
 pillow>=10.0.1 # not directly required, pinned by Snyk to avoid a vulnerability

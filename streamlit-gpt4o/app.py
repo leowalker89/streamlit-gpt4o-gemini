@@ -11,6 +11,8 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_gemini
 from st_multimodal_chatinput import multimodal_chatinput
 
 __version__ = "0.0.4"
@@ -98,6 +100,7 @@ with st.sidebar:
             verbose=True,
             openai_api_key=openai_api_key,
         )
+        # llm = ChatGoogleGenerativeAI(model=""gemini-1.5-pro-preview-0514"")
         runnable = prompt | llm
         with_message_history = RunnableWithMessageHistory(
             runnable,
