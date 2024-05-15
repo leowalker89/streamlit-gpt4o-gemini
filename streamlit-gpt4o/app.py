@@ -12,7 +12,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_gemini
 from st_multimodal_chatinput import multimodal_chatinput
 
 __version__ = "0.0.4"
