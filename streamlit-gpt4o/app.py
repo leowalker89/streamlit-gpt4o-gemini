@@ -144,37 +144,38 @@ with st.sidebar:
         st.rerun()
 
 
-if not with_message_history:
-    st.error("Please enter an OpenAI API key in the sidebar.")
 
-else:
-    with bottom:
-        chat_input_dict = multimodal_chatinput(text_color="black")
-        if chat_input_dict:
-            chat_input_human_message = chat_input_to_human_message(chat_input_dict)
+# if not True: #with_message_history:
+#     st.error("Please enter an OpenAI API key in the sidebar.")
 
-    with top:
-        for msg in history.messages:
-            if msg.type.lower() in ("user", "human"):
-                with st.chat_message("human"):
-                    render_human_contents(msg)
-            elif msg.type.lower() in ("ai", "assistant", "aimessagechunk"):
-                with st.chat_message("ai"):
-                    st.write(msg.content)
+# else:
+with bottom:
+    chat_input_dict = multimodal_chatinput(text_color="black")
+    if chat_input_dict:
+        chat_input_human_message = chat_input_to_human_message(chat_input_dict)
 
-        if chat_input_human_message:
-
+with top:
+    for msg in history.messages:
+        if msg.type.lower() in ("user", "human"):
             with st.chat_message("human"):
-                render_human_contents(chat_input_human_message)
-
+                render_human_contents(msg)
+        elif msg.type.lower() in ("ai", "assistant", "aimessagechunk"):
             with st.chat_message("ai"):
-                st.write_stream(
-                    with_message_history.stream(
-                        {"input": [chat_input_human_message]},
-                        {
-                            "configurable": {"session_id": st.session_state.session_id},
-                        },
-                    ),
-                )
+                st.write(msg.content)
 
-            chat_input_human_message = None
+    if chat_input_human_message:
+
+        with st.chat_message("human"):
+            render_human_contents(chat_input_human_message)
+
+        with st.chat_message("ai"):
+            st.write_stream(
+                with_message_history.stream(
+                    {"input": [chat_input_human_message]},
+                    {
+                        "configurable": {"session_id": st.session_state.session_id},
+                    },
+                ),
+            )
+
+        chat_input_human_message = None
