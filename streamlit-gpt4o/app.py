@@ -142,9 +142,11 @@ with st.sidebar:
         st.session_state.session_id = None
         st.rerun()
 
+# write instructions to go here to get started with google generative ai and gemini https://aistudio.google.com/
+
 
 if not with_message_history:
-    st.error("Please enter an Google Generative AI API key in the sidebar.")
+    st.error("Please enter a Google Generative AI API key in the sidebar. \n\nTo get started with Google Generative AI and Gemini, follow these steps:\n\n1. Go to [https://aistudio.google.com/](https://aistudio.google.com/)\n2. Sign in or create a new account if you don't have one.\n3. Explore the available models and select the one that suits your needs.\n4. Obtain an API key for the Google Generative AI API.\n5. In the sidebar, enter the obtained API key in the 'Google Generative AI API Key' field.\n6. Choose whether to use the 'Pro' or 'Flash' version of the Gemini model by toggling the switch.\n7. Start using the Google Generative AI and Gemini models in your chatbot application!")
 
 else:
     with bottom:
