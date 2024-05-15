@@ -10,7 +10,7 @@ from langchain_community.chat_message_histories import (
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from st_multimodal_chatinput import multimodal_chatinput
 from dotenv import load_dotenv
@@ -91,18 +91,17 @@ top = st.container()
 bottom = st.container()
 
 with st.sidebar:
-    # openai_api_key = st.text_input("OpenAI API Key", type="password")
-    openai_api_key = True
-    use_gpt4o = st.toggle(label="`gpt-4-turbo` ⇄ `gpt-4o`", value=True)
-    model_option = "gpt-4o" if use_gpt4o else "gpt-4-turbo"
-    if openai_api_key:
-        # llm = ChatOpenAI(
-        #     model=model_option,
-        #     streaming=True,
-        #     verbose=True,
-        #     openai_api_key=openai_api_key,
-        # )
-        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-preview-0514")
+    google_api_key = st.text_input("Google Generative AI API Key", type="password")
+    st.write('Gemini 1.5')
+    use_flash = st.toggle(label="`Pro` ⇄ `Flash`", value=True)
+    model_option = "models/gemini-1.5-flash-latest" if use_flash else "models/gemini-1.5-pro-latest"
+    if google_api_key:
+        llm = ChatGoogleGenerativeAI(
+            model=model_option,
+            streaming=True,
+            verbose=True,
+            google_api_key=google_api_key,
+        )
         runnable = prompt | llm
         with_message_history = RunnableWithMessageHistory(
             runnable,
@@ -114,7 +113,7 @@ with st.sidebar:
     langsmith_api_key = st.text_input("LangSmith API Key", type="password")
     langsmith_project_name = st.text_input(
         "LangSmith Project Name",
-        value="streamlit-gpt4o",
+        value="streamlit-gemini",
     )
     langsmith_endpoint = st.text_input(
         "LangSmith Endpoint",
@@ -144,38 +143,37 @@ with st.sidebar:
         st.rerun()
 
 
+if not with_message_history:
+    st.error("Please enter an Google Generative AI API key in the sidebar.")
 
-# if not True: #with_message_history:
-#     st.error("Please enter an OpenAI API key in the sidebar.")
+else:
+    with bottom:
+        chat_input_dict = multimodal_chatinput(text_color="black")
+        if chat_input_dict:
+            chat_input_human_message = chat_input_to_human_message(chat_input_dict)
 
-# else:
-with bottom:
-    chat_input_dict = multimodal_chatinput(text_color="black")
-    if chat_input_dict:
-        chat_input_human_message = chat_input_to_human_message(chat_input_dict)
+    with top:
+        for msg in history.messages:
+            if msg.type.lower() in ("user", "human"):
+                with st.chat_message("human"):
+                    render_human_contents(msg)
+            elif msg.type.lower() in ("ai", "assistant", "aimessagechunk"):
+                with st.chat_message("ai"):
+                    st.write(msg.content)
 
-with top:
-    for msg in history.messages:
-        if msg.type.lower() in ("user", "human"):
+        if chat_input_human_message:
+
             with st.chat_message("human"):
-                render_human_contents(msg)
-        elif msg.type.lower() in ("ai", "assistant", "aimessagechunk"):
+                render_human_contents(chat_input_human_message)
+
             with st.chat_message("ai"):
-                st.write(msg.content)
+                st.write_stream(
+                    with_message_history.stream(
+                        {"input": [chat_input_human_message]},
+                        {
+                            "configurable": {"session_id": st.session_state.session_id},
+                        },
+                    ),
+                )
 
-    if chat_input_human_message:
-
-        with st.chat_message("human"):
-            render_human_contents(chat_input_human_message)
-
-        with st.chat_message("ai"):
-            st.write_stream(
-                with_message_history.stream(
-                    {"input": [chat_input_human_message]},
-                    {
-                        "configurable": {"session_id": st.session_state.session_id},
-                    },
-                ),
-            )
-
-        chat_input_human_message = None
+            chat_input_human_message = None
