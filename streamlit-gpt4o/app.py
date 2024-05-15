@@ -13,6 +13,8 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from st_multimodal_chatinput import multimodal_chatinput
+from dotenv import load_dotenv
+load_dotenv()
 
 __version__ = "0.0.4"
 
@@ -89,17 +91,18 @@ top = st.container()
 bottom = st.container()
 
 with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API Key", type="password")
+    # openai_api_key = st.text_input("OpenAI API Key", type="password")
+    openai_api_key = True
     use_gpt4o = st.toggle(label="`gpt-4-turbo` ⇄ `gpt-4o`", value=True)
     model_option = "gpt-4o" if use_gpt4o else "gpt-4-turbo"
     if openai_api_key:
-        llm = ChatOpenAI(
-            model=model_option,
-            streaming=True,
-            verbose=True,
-            openai_api_key=openai_api_key,
-        )
-        # llm = ChatGoogleGenerativeAI(model=""gemini-1.5-pro-preview-0514"")
+        # llm = ChatOpenAI(
+        #     model=model_option,
+        #     streaming=True,
+        #     verbose=True,
+        #     openai_api_key=openai_api_key,
+        # )
+        llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro-preview-0514")
         runnable = prompt | llm
         with_message_history = RunnableWithMessageHistory(
             runnable,
